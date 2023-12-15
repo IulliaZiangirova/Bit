@@ -1,0 +1,52 @@
+package bitmexbot.service;
+
+import bitmexbot.model.AuthenticationHeaders;
+import bitmexbot.model.Order;
+import bitmexbot.model.OrderRequest;
+import bitmexbot.util.AuthenticationHeadersCreator;
+import bitmexbot.util.HttpRequestCreator;
+import bitmexbot.util.JsonCreator;
+
+
+import java.net.URI;
+import java.net.http.HttpRequest;
+
+public class OpenOrderRequest extends BasicOrderRequest {
+
+    private final String HTTP_METHOD_POST= "POST";
+    private AuthenticationHeaders authenticationHeaders;
+    private final Order order;
+    private final String apiSecretKey;
+    private final String apiKey;
+    private JsonCreator jsonCreator = new JsonCreator();
+
+    public OpenOrderRequest(Order order, String baseUrl, String apiSecretKey, String apiKey) {
+        this.apiSecretKey = apiSecretKey;
+        this.apiKey = apiKey;
+        this.order = order;
+        createHttpRequest(baseUrl);
+    }
+
+    private AuthenticationHeaders getAuthenticationHeaders(){
+        AuthenticationHeadersCreator createAuthenticationHeaders = new AuthenticationHeadersCreator();
+        authenticationHeaders = createAuthenticationHeaders.getAuthenticationHeaders(HTTP_METHOD_POST, getData(), PATH, apiSecretKey, apiKey);
+    return authenticationHeaders;
+    }
+
+    private String getData() {
+        OrderRequest orderRequest = OrderRequest.toRequest(order);
+        return jsonCreator.toJson(orderRequest);
+    }
+
+    @Override
+    void createHttpRequest(String baseUrl) {
+        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(getData());
+        HttpRequestCreator httpRequestCreator = new HttpRequestCreator();
+        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_POST, bodyPublishers );
+    }
+
+    @Override
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
+    }
+}
