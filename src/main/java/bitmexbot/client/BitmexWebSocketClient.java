@@ -16,18 +16,17 @@ import java.util.concurrent.atomic.AtomicLong;
 public class BitmexWebSocketClient {
     private final String serverUri = "wss://ws.testnet.bitmex.com/realtime";
     private Session session;
+    private WebSocketContainer container;
+
+    private String userId;
     private Boolean isConnected;
     private String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
     private String apiSecret = "i_dE1FKK42t64fB7qMLcaYL0xfe3yqaR2LqouYqf-HM02QCP";
-    private AtomicLong lastMessageTime = new AtomicLong();
-
-
-
 
 
     public void connect(){
         try{
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, new URI(serverUri));
             session.setMaxIdleTimeout(TimeUnit.MINUTES.toMillis(60));
             if(session.isOpen()){
@@ -66,6 +65,12 @@ public class BitmexWebSocketClient {
         log.info("error: " + error.getMessage());
 
     }
+
+    public void stopWebSocketThreads(){
+
+    }
+
+    public void ping(){}
 
 
 }

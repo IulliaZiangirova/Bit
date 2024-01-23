@@ -28,8 +28,8 @@ public class OpenOrderRequest extends BasicOrderRequest {
     }
 
     private AuthenticationHeaders getAuthenticationHeaders(){
-        AuthenticationHeadersCreator createAuthenticationHeaders = new AuthenticationHeadersCreator();
-        authenticationHeaders = createAuthenticationHeaders.getAuthenticationHeaders(HTTP_METHOD_POST, getData(), PATH, apiSecretKey, apiKey);
+        AuthenticationHeadersCreator authenticationHeadersCreator = new AuthenticationHeadersCreator();
+        authenticationHeaders = authenticationHeadersCreator.getAuthenticationHeaders(HTTP_METHOD_POST, getData(), PATH, apiSecretKey, apiKey);
     return authenticationHeaders;
     }
 
@@ -41,12 +41,8 @@ public class OpenOrderRequest extends BasicOrderRequest {
     @Override
     void createHttpRequest(String baseUrl) {
         HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(getData());
-        HttpRequestCreator httpRequestCreator = new HttpRequestCreator();
         httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_POST, bodyPublishers );
     }
 
-    @Override
-    public HttpRequest getHttpRequest() {
-        return httpRequest;
-    }
+
 }

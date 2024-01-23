@@ -12,31 +12,28 @@ public class GetOrderRequest extends BasicOrderRequest {
 
     private final String HTTP_METHOD_GET = "GET";
     private AuthenticationHeaders authenticationHeaders;
-    private String data = "";
+    private final String DATA = "";
     private final String apiSecretKey;
     private final String apiKey;
 
     public GetOrderRequest(String baseUrl, String apiSecretKey, String apiKey) {
         this.apiSecretKey = apiSecretKey;
         this.apiKey = apiKey;
-        createHttpRequest(baseUrl);
+        bodyPublishers = HttpRequest.BodyPublishers.noBody();
+        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(), ENDPOINT_ORDER, HTTP_METHOD_GET, bodyPublishers);
+        //createHttpRequest(baseUrl);
     }
 
-    private AuthenticationHeaders getAuthenticationHeaders(){
-        AuthenticationHeadersCreator createAuthenticationHeaders = new AuthenticationHeadersCreator();
-        authenticationHeaders = createAuthenticationHeaders.getAuthenticationHeaders(HTTP_METHOD_GET, data, PATH, apiSecretKey, apiKey);
+    private AuthenticationHeaders getAuthenticationHeaders() {
+        AuthenticationHeadersCreator authenticationHeadersCreator = new AuthenticationHeadersCreator();
+        authenticationHeaders = authenticationHeadersCreator.getAuthenticationHeaders(HTTP_METHOD_GET, DATA, PATH, apiSecretKey, apiKey);
         return authenticationHeaders;
     }
 
-    @Override
-    void createHttpRequest(String baseUrl) {
-        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.noBody();
-        HttpRequestCreator httpRequestCreator = new HttpRequestCreator();
-        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_GET, bodyPublishers );
-    }
+//    @Override
+//    void createHttpRequest(String baseUrl) {
+//        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.noBody();
+//        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_GET, bodyPublishers );
+//    }
 
-    @Override
-    public HttpRequest getHttpRequest() {
-        return httpRequest;
-    }
 }

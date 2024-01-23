@@ -1,4 +1,4 @@
-package bitmexbot.client;
+package bitmexbot.model;
 
 import bitmexbot.repository.OrderRepository;
 
@@ -11,10 +11,5 @@ public class Bot {
     private OrderRepository orderRepository; //созданные ордера
     private int miniLevel; //уровень контрордеров
 
-    public void start(){}
-    public void stop(){}
 
-    public void getSequenceFibonacci(){
-        //на основе лвл генерируем уровни фибоначи
-    }
 }

@@ -26,39 +26,25 @@ public class BitmexClient {
 
     public void getAllOrder()  {
         httpRequest = new GetOrderRequest( baseUrl, apiSecretKey, apiKey);
-        try {
-            HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-            System.out.println(response.statusCode());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        getResponse(httpRequest);
     }
 
     public void sendOrder(Order order)  {
         httpRequest = new OpenOrderRequest(order, baseUrl, apiSecretKey, apiKey);
-        try {
-            HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-            System.out.println(response.statusCode());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        getResponse(httpRequest);
     }
 
     public void cancelOrderById(String orderId){
         httpRequest = new CancelOrderRequest(orderId, baseUrl, apiSecretKey, apiKey);
-        try {
-            HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
-            System.out.println(response.statusCode());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        getResponse(httpRequest);
     }
 
     public void cancelAllOrders(String orderId){
         httpRequest = new CancelOrderRequest(orderId, baseUrl, apiSecretKey, apiKey);
+        getResponse(httpRequest);
+    }
+
+    private void getResponse(BasicOrderRequest httpRequest){
         try {
             HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
             System.out.println(response.body());

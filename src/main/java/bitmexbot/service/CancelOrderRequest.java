@@ -23,6 +23,7 @@ public class CancelOrderRequest extends BasicOrderRequest {
         this.apiSecretKey = apiSecretKey;
         this.apiKey = apiKey;
         this.orderId = orderId;
+        bodyPublishers = HttpRequest.BodyPublishers.ofString(getData());
         createHttpRequest(baseUrl);
     }
 
@@ -41,16 +42,14 @@ public class CancelOrderRequest extends BasicOrderRequest {
     }
 
     private AuthenticationHeaders getAuthenticationHeaders(){
-        AuthenticationHeadersCreator createAuthenticationHeaders = new AuthenticationHeadersCreator();
-        authenticationHeaders = createAuthenticationHeaders.getAuthenticationHeaders(HTTP_METHOD_DELETE, getData(), PATH, apiSecretKey, apiKey);
+        AuthenticationHeadersCreator authenticationHeadersCreator = new AuthenticationHeadersCreator();
+        authenticationHeaders = authenticationHeadersCreator.getAuthenticationHeaders(HTTP_METHOD_DELETE, getData(), PATH, apiSecretKey, apiKey);
         return authenticationHeaders;
     }
 
 
     @Override
      void createHttpRequest(String baseUrl) {
-        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(getData());
-        HttpRequestCreator httpRequestCreator = new HttpRequestCreator();
         httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_DELETE, bodyPublishers );
     }
 }
