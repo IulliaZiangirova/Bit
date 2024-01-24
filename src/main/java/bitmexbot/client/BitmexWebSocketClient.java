@@ -1,8 +1,10 @@
 package bitmexbot.client;
 
+import bitmexbot.service.BotExecutor;
 import bitmexbot.util.SignatureCreator;
 import jakarta.websocket.*;
 import lombok.extern.slf4j.Slf4j;
+import org.glassfish.tyrus.spi.ClientContainer;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @ClientEndpoint
 @Slf4j
 public class BitmexWebSocketClient {
-    private final String serverUri = "wss://ws.testnet.bitmex.com/realtime";
+    private final String serverUri = "wss://ws.testnet.bitmex.com/realtime?subscribe=orderBookL2_25:XBTUSD";
     private Session session;
     private WebSocketContainer container;
 
@@ -23,12 +25,14 @@ public class BitmexWebSocketClient {
     private String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
     private String apiSecret = "i_dE1FKK42t64fB7qMLcaYL0xfe3yqaR2LqouYqf-HM02QCP";
 
+    private BotExecutor botExecutor;
+
 
     public void connect(){
         try{
             container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, new URI(serverUri));
-            session.setMaxIdleTimeout(TimeUnit.MINUTES.toMillis(60));
+            //session.setMaxIdleTimeout(TimeUnit.MINUTES.toMillis(2000));
             if(session.isOpen()){
                 isConnected = true;
                 log.info("Session is open");
@@ -44,13 +48,14 @@ public class BitmexWebSocketClient {
 
     @OnOpen
     public void onOpen(Session userSession) {
-        System.out.println("opening websocket");
+        System.out.println("Connected to BitMEX API WebSocket");
         this.session = userSession;
     }
 
 
     @OnMessage
     public void onMessage(String message){
+        System.out.println("smt");
         System.out.println(message);
 
     }
@@ -66,9 +71,44 @@ public class BitmexWebSocketClient {
 
     }
 
-    public void stopWebSocketThreads(){
-
+    @OnClose
+    public void onClose(CloseReason closeReason) {
+        System.out.println("Disconnected from BitMEX API WebSocket: " + closeReason);
+        this.session = null;
     }
+
+//    public void stopWebSocketThreads(){
+//        // Stop WebSocket container and close session
+//        try {
+//            if (container instanceof ClientContainer) {
+//                //((ClientContainer) container).g
+//                ((ClientContainer) container).getClient().stop();
+//                log.debug("Container is stopped");
+//            }
+//        } catch (Exception e) {
+//            log.error("Error during stopping container: " + e.getMessage());
+//        }
+//        try {
+//            if (session != null && session.isOpen()) {
+//                session.close();
+//                log.debug("Session is closed");
+//            }
+//        } catch (Exception e) {
+//            log.error("Error during closing session: " + e.getMessage());
+//
+//        }
+//    }
+
+    public void disconnect() {
+        if (this.session != null) {
+            try {
+                this.session.close();
+            } catch (Exception e) {
+                System.err.println("Error while closing WebSocket session: " + e.getMessage());
+            }
+        }
+    }
+
 
     public void ping(){}
 

@@ -30,10 +30,10 @@ public class GetOrderRequest extends BasicOrderRequest {
         return authenticationHeaders;
     }
 
-//    @Override
-//    void createHttpRequest(String baseUrl) {
-//        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.noBody();
-//        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_GET, bodyPublishers );
-//    }
+    @Override
+    void createHttpRequest(String baseUrl) {
+        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.noBody();
+        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_GET, bodyPublishers );
+    }
 
 }

@@ -2,9 +2,10 @@ package bitmexbot.service;
 
 import bitmexbot.model.Bot;
 
-public class BotService {
+public class BotExecutor {
 
     private Bot bot;
+    private BitmexClient bitmexClient;
 
     public void start(){}
     public void stop(){}

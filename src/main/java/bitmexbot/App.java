@@ -8,6 +8,7 @@ import bitmexbot.service.BitmexClientFactory;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class App {
 
@@ -20,13 +21,13 @@ public class App {
 
         BitmexClient bitmexClient = BitmexClientFactory.newTestnetBitmexClient(apiKey, apiSecret);
 
-        Order order = Order.builder()
-                .orderQty(500)
-                .orderType(OrderType.LMT)
-                .isBuy(true)
-                .symbol(Symbol.XBTUSD)
-                .price(35000.)
-                .build();
+//        Order order = Order.builder()
+//                .orderQty(500)
+//                .orderType(OrderType.LMT)
+//                .isBuy(true)
+//                .symbol(Symbol.XBTUSD)
+//                .price(35000.)
+//                .build();
 
         //bitmexClient.getAllOrder();
 
@@ -34,8 +35,18 @@ public class App {
 
         //bitmexClient.cancelOrderById("b5cc1d5f-cada-4674-bd41-cb7f325515fb");
 
-        BitmexWebSocketClient bitmexWebSocketClient = new BitmexWebSocketClient();
-        bitmexWebSocketClient.connect();
+
+            BitmexWebSocketClient bitmexWebSocketClient = new BitmexWebSocketClient();
+            bitmexWebSocketClient.connect();
+
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Close the connection
+            bitmexWebSocketClient.disconnect();
 
 
 
