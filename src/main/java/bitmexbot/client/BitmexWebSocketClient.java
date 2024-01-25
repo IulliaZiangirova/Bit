@@ -16,7 +16,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @ClientEndpoint
 @Slf4j
 public class BitmexWebSocketClient {
-    private final String serverUri = "wss://ws.testnet.bitmex.com/realtime?subscribe=orderBookL2_25:XBTUSD";
+    private final String serverUri = "wss://ws.testnet.bitmex.com/realtime?subscribe";
+    private final String serverUri1 = "wss://ws.testnet.bitmex.com/realtime?subscribe=order";
     private Session session;
     private WebSocketContainer container;
 
@@ -32,15 +33,18 @@ public class BitmexWebSocketClient {
         try{
             container = ContainerProvider.getWebSocketContainer();
             session = container.connectToServer(this, new URI(serverUri));
-            //session.setMaxIdleTimeout(TimeUnit.MINUTES.toMillis(2000));
             if(session.isOpen()){
-                isConnected = true;
+               isConnected = true;
                 log.info("Session is open");
-                SignatureCreator signature = new SignatureCreator();
+               SignatureCreator signature = new SignatureCreator();
                 long expires = System.currentTimeMillis() / 1000 + 5;
                 String signatureStr = signature.getSignature(apiSecret, "GET/realtime" + expires);
-                session.getBasicRemote().sendText("{\"op\": \"authKeyExpires\", \"args\": [\"" + apiKey + "\", " + expires + ", \"" + signatureStr + "\" ]}\n");
-            }}
+                String authRequest = "{\"op\":\"authKeyExpires\",\"args\":[\"" + apiKey + "\"," + expires + ",\"" + signatureStr + "\"]}\n";
+                session.getBasicRemote().sendText(authRequest);
+                String orderRequest = "{\"op\": \"subscribe\", \"args\": \"order\"}";
+                session.getBasicRemote().sendText(orderRequest);
+           }
+    }
         catch (URISyntaxException| IOException| DeploymentException e){
             log.error("Cannot connect to the simulator server.");
         }
@@ -55,7 +59,7 @@ public class BitmexWebSocketClient {
 
     @OnMessage
     public void onMessage(String message){
-        System.out.println("smt");
+        System.out.println("--");
         System.out.println(message);
 
     }
