@@ -2,6 +2,8 @@ package bitmexbot.service;
 
 
 import bitmexbot.model.*;
+import bitmexbot.repository.OrderRepository;
+import bitmexbot.util.JsonCreator;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -16,6 +18,8 @@ public class BitmexClient {
     private final String baseUrl;
     private final String apiSecretKey;
     private final String apiKey;
+    private final JsonCreator jsonCreator = new JsonCreator();
+    private OrderRepository orderRepository = new OrderRepository();
 
 
     public BitmexClient(String baseUrl, String apiSecretKey, String apiKey) {
@@ -31,7 +35,7 @@ public class BitmexClient {
 
     public void sendOrder(Order order)  {
         httpRequest = new OpenOrderRequest(order, baseUrl, apiSecretKey, apiKey);
-        getResponse(httpRequest);
+        getResponseWithOrder(httpRequest);
     }
 
     public void cancelOrderById(String orderId){
@@ -47,6 +51,19 @@ public class BitmexClient {
     private void getResponse(BasicOrderRequest httpRequest){
         try {
             HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
+            System.out.println(response.statusCode());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getResponseWithOrder(BasicOrderRequest httpRequest){
+        try {
+            HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
+            Order newOrder = jsonCreator.fromJson(response.body());
+            orderRepository.save(newOrder);
+            System.out.println(newOrder);
             System.out.println(response.body());
             System.out.println(response.statusCode());
         } catch (IOException | InterruptedException e) {

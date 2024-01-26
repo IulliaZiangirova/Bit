@@ -19,10 +19,10 @@ public class OrderRequest {
 
     public static OrderRequest toRequest(Order order){
         String symbol = order.getSymbol().toString();
-        String side = order.isBuy() ? "Buy" : "Sell";
+        String side = order.getSide();
         Double orderQty = order.getOrderQty();
         Double price = order.getPrice();
-        String ordType = getType(order.getOrderType());
+        String ordType = getType(order.getOrdType());
         Double stopPx = order.getStopPx();
 
         return new OrderRequest(symbol, side, orderQty, price, ordType, stopPx);

@@ -43,6 +43,13 @@ public class BitmexWebSocketClient {
                 session.getBasicRemote().sendText(authRequest);
                 String orderRequest = "{\"op\": \"subscribe\", \"args\": \"order\"}";
                 session.getBasicRemote().sendText(orderRequest);
+                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"margin\"}");
+                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"position\"}");
+//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
+//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
+//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
+//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
+
            }
     }
         catch (URISyntaxException| IOException| DeploymentException e){
