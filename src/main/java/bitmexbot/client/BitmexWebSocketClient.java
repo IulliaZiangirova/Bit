@@ -1,8 +1,10 @@
 package bitmexbot.client;
 
 import bitmexbot.service.BotExecutor;
+import bitmexbot.util.JsonCreator;
 import bitmexbot.util.SignatureCreator;
 import jakarta.websocket.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.glassfish.tyrus.spi.ClientContainer;
 
@@ -15,18 +17,21 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @ClientEndpoint
 @Slf4j
+@Data
 public class BitmexWebSocketClient {
     private final String serverUri = "wss://ws.testnet.bitmex.com/realtime?subscribe";
     private final String serverUri1 = "wss://ws.testnet.bitmex.com/realtime?subscribe=order";
     private Session session;
     private WebSocketContainer container;
+    private JsonCreator jsonCreator = new JsonCreator();
+
 
     private String userId;
     private Boolean isConnected;
     private String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
     private String apiSecret = "i_dE1FKK42t64fB7qMLcaYL0xfe3yqaR2LqouYqf-HM02QCP";
-
     private BotExecutor botExecutor;
+
 
 
     public void connect(){
@@ -43,13 +48,8 @@ public class BitmexWebSocketClient {
                 session.getBasicRemote().sendText(authRequest);
                 String orderRequest = "{\"op\": \"subscribe\", \"args\": \"order\"}";
                 session.getBasicRemote().sendText(orderRequest);
-                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"margin\"}");
-                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"position\"}");
-//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
-//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
-//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
-//                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"quote\"}";);
-
+                session.getBasicRemote().sendText("{\"op\": \"subscribe\", \"args\": \"trade:XBTUSD\"}");
+                session.getBasicRemote().sendText("{\"op\": \"unsubscribe\", \"args\": \"trade:XBTUSD\"}");
            }
     }
         catch (URISyntaxException| IOException| DeploymentException e){
@@ -68,6 +68,19 @@ public class BitmexWebSocketClient {
     public void onMessage(String message){
         System.out.println("--");
         System.out.println(message);
+//        if (message.contains("\"table\":\"order\"")){
+//            botExecutor.getStartPrice(message);
+//            System.out.println(botExecutor.getStartPrice());
+//            log.info("Start price: " + botExecutor.getStartPrice());
+//        }
+
+        if (message.contains("\"table\":\"trade\"")){
+            System.out.println(jsonCreator.parsStartPrice(message));
+            Double price = jsonCreator.parsStartPrice(message);
+            botExecutor.setStartPrice(price);
+            System.out.println(botExecutor.getStartPrice());
+            log.info("Start price: " + botExecutor.getStartPrice());
+        }
 
     }
 

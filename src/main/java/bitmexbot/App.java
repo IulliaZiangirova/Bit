@@ -1,6 +1,7 @@
 package bitmexbot;
 
 
+import bitmexbot.client.BitmexWebSocketClient;
 import bitmexbot.service.BotExecutor;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -30,19 +31,26 @@ public class App {
 
         //bitmexClient.cancelOrderById("b5cc1d5f-cada-4674-bd41-cb7f325515fb");
 
-
-
-
         BotExecutor botExecutor = new BotExecutor();
         botExecutor.start();
 
         try {
-            TimeUnit.SECONDS.sleep(30);
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
+        botExecutor.logic();
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         botExecutor.stop();
+
+
 
 
 

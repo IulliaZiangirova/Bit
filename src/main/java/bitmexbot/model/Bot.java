@@ -2,8 +2,10 @@ package bitmexbot.model;
 
 import bitmexbot.repository.OrderRepository;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
+@Getter
 public class Bot {
 
     private double step;
