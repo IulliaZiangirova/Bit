@@ -1,10 +1,7 @@
 package bitmexbot.service;
 
 import bitmexbot.client.BitmexWebSocketClient;
-import bitmexbot.model.Bot;
-import bitmexbot.model.Order;
-import bitmexbot.model.OrderType;
-import bitmexbot.model.Symbol;
+import bitmexbot.model.*;
 import bitmexbot.util.JsonCreator;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +21,7 @@ public class BotExecutor {
     public void start(){
         bitmexWebSocketClient.connect();
         bitmexWebSocketClient.setBotExecutor(this);
-        initBot(100, 6, 100);
+        initBot(100, 2, 100);
         bot.setSequenceFibonacci(initSequenceFibonacci(6));
         //logic();
     }

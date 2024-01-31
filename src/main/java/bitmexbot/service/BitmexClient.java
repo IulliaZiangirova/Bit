@@ -1,6 +1,7 @@
 package bitmexbot.service;
 
 
+import bitmexbot.dao.OrderDao;
 import bitmexbot.model.*;
 import bitmexbot.repository.OrderRepository;
 import bitmexbot.util.JsonCreator;
@@ -20,6 +21,7 @@ public class BitmexClient {
     private final String apiKey;
     private final JsonCreator jsonCreator = new JsonCreator();
     private OrderRepository orderRepository = new OrderRepository();
+    private OrderDao orderDao = new OrderDao();
 
 
     public BitmexClient(String baseUrl, String apiSecretKey, String apiKey) {
@@ -62,7 +64,8 @@ public class BitmexClient {
         try {
             HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
             Order newOrder = jsonCreator.fromJson(response.body());
-            orderRepository.save(newOrder);
+            //orderRepository.save(newOrder);
+            orderDao.save(newOrder);
             System.out.println(newOrder);
             System.out.println(response.body());
             System.out.println(response.statusCode());
