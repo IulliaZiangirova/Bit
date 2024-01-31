@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BitmexBot.iml" filepath="$PROJECT_DIR$/BitmexBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Bit.iml" filepath="$PROJECT_DIR$/Bit.iml" />
     </modules>
   </component>
 </project>
