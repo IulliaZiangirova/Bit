@@ -68,20 +68,15 @@ public class BitmexWebSocketClient {
     public void onMessage(String message){
         System.out.println("--");
         System.out.println(message);
-//        if (message.contains("\"table\":\"order\"")){
-//            botExecutor.getStartPrice(message);
-//            System.out.println(botExecutor.getStartPrice());
-//            log.info("Start price: " + botExecutor.getStartPrice());
-//        }
-
-        if (message.contains("\"table\":\"trade\"")){
-            System.out.println(jsonCreator.parsStartPrice(message));
-            Double price = jsonCreator.parsStartPrice(message);
-            botExecutor.setStartPrice(price);
-            System.out.println(botExecutor.getStartPrice());
-            log.info("Start price: " + botExecutor.getStartPrice());
+        if (message.contains("\"table\":\"order\"")){
+            jsonCreator.parsOrders(message);
         }
 
+        if (message.contains("\"table\":\"trade\"")){
+            Double price = jsonCreator.parsStartPrice(message);
+            botExecutor.setStartPrice(price);
+            log.info("Start price: " + price);
+        }
     }
 
     @OnMessage
