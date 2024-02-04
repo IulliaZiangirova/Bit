@@ -6,7 +6,9 @@ public enum OrderStatus {
     @SerializedName("New")
     NEW,
     WORKING,
+    @SerializedName("Filled")
     FILLED,
     REJECTED,
+    @SerializedName("Canceled")
     CANCELED
 }

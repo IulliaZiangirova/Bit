@@ -43,14 +43,14 @@ public class App {
         botExecutor.start();
 
         try {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
         botExecutor.logic();
         try {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

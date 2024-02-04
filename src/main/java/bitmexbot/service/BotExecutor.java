@@ -1,13 +1,16 @@
 package bitmexbot.service;
 
 import bitmexbot.client.BitmexWebSocketClient;
+import bitmexbot.dao.OrderDao;
 import bitmexbot.model.*;
 import bitmexbot.util.JsonCreator;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Setter
 @Getter
+@Slf4j
 public class BotExecutor {
 
     private final String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
@@ -15,19 +18,20 @@ public class BotExecutor {
     private Double startPrice;
     private JsonCreator jsonCreator = new JsonCreator();
     private Bot bot;
+    private Order [] activeOrders;
     private BitmexClient bitmexClient = BitmexClientFactory.newTestnetBitmexClient(apiKey, apiSecret);
     private final BitmexWebSocketClient bitmexWebSocketClient = new BitmexWebSocketClient();
+    private OrderDao orderDao = new OrderDao();
 
     public void start(){
         bitmexWebSocketClient.connect();
         bitmexWebSocketClient.setBotExecutor(this);
-        initBot(100, 2, 100);
+        initBot(100, 5, 100);
         bot.setSequenceFibonacci(initSequenceFibonacci(6));
-        //logic();
     }
 
     public void logic(){
-        Double price = startPrice;
+        Double price = startPrice - bot.getStep();
         for (int i = 0; i < bot.getLevel(); i++) {
             Order order = Order.builder()
                     .orderQty(bot.getSequenceFibonacci()[i] * bot.getCoefficient() )
@@ -40,6 +44,32 @@ public class BotExecutor {
             price = price - bot.getStep() * bot.getSequenceFibonacci()[i];
         }
     }
+
+    public void parsData(String message){
+        if (message.contains("\"table\":\"order\"")){
+            activeOrders = jsonCreator.parsOrders(message);
+            checkOrders(activeOrders);
+        }
+
+        if (message.contains("\"table\":\"trade\"")){
+            Double price = jsonCreator.parsStartPrice(message);
+            this.startPrice = price;
+            log.info("Start price: " + price);
+        }
+    }
+
+    public void checkOrders(Order [] orders) {
+        for (Order order : orders) {
+            System.out.println(order);
+            if(!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.CANCELED){
+                orderDao.merge(order);
+            } else if (!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.FILLED){
+                orderDao.merge1(order);
+            };
+
+            }
+        }
+
 
     public void stop(){
         bitmexWebSocketClient.disconnect();

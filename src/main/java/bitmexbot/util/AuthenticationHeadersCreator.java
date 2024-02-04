@@ -4,7 +4,7 @@ import bitmexbot.model.AuthenticationHeaders;
 
 public class AuthenticationHeadersCreator {
 
-    private final int EXPIRES_DELAY = 5;
+    private final int EXPIRES_DELAY = 10;
     private final SignatureCreator signature =  new SignatureCreator();
 
     public AuthenticationHeaders getAuthenticationHeaders(String httpMethod, String data, String path, String apiSecretKey, String apiKey)  {

@@ -24,6 +24,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Symbol symbol;
 
+
     private String side;
 
     @Column(name = "order_qty")
@@ -44,13 +45,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus ordStatus;
 
+//    @Column(name = "transact_time")
+//    private LocalDateTime transactTime;
+
 
 //    @CreationTimestamp
 //    @Column(name = "create_date")
-//    @Expose
 //    private LocalDateTime creationDate;
 //    @UpdateTimestamp
-//    @Expose
 //    @Column(name = "update_date")
 //    private LocalDateTime changeDate;
 
