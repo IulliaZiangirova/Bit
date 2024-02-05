@@ -1,19 +1,13 @@
 package bitmexbot.util;
 
 import bitmexbot.model.Order;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.List;
+import com.google.gson.*;
 
 
-public class JsonCreator {
+public class JsonUtil {
 
     private static final Gson gson = new Gson();
+
     private static final Gson gsonWithoutFields = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public String toJson(Object object) {
@@ -21,7 +15,7 @@ public class JsonCreator {
     }
 
     public Order fromJson(String string) {
-        Order order = gson.fromJson(string, Order.class);
+        Order order = gsonWithoutFields.fromJson(string, Order.class);
         return order;
     }
 
@@ -36,10 +30,9 @@ public class JsonCreator {
     public Order [] parsOrders (String message){
         JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
         String str = jsonObject.get("data").toString();
-        Order [] myOrders = gson.fromJson(str, Order[].class);
+        Order [] myOrders = gsonWithoutFields.fromJson(str, Order[].class);
         return myOrders;
     }
 
-
-    }
+}
 

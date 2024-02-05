@@ -4,11 +4,9 @@ import bitmexbot.model.AuthenticationHeaders;
 import bitmexbot.model.Order;
 import bitmexbot.model.OrderRequest;
 import bitmexbot.util.AuthenticationHeadersCreator;
-import bitmexbot.util.HttpRequestCreator;
-import bitmexbot.util.JsonCreator;
+import bitmexbot.util.JsonUtil;
 
 
-import java.net.URI;
 import java.net.http.HttpRequest;
 
 public class OpenOrderRequest extends BasicOrderRequest {
@@ -18,7 +16,7 @@ public class OpenOrderRequest extends BasicOrderRequest {
     private final Order order;
     private final String apiSecretKey;
     private final String apiKey;
-    private JsonCreator jsonCreator = new JsonCreator();
+    private JsonUtil jsonUtil = new JsonUtil();
 
     public OpenOrderRequest(Order order, String baseUrl, String apiSecretKey, String apiKey) {
         this.apiSecretKey = apiSecretKey;
@@ -35,7 +33,7 @@ public class OpenOrderRequest extends BasicOrderRequest {
 
     private String getData() {
         OrderRequest orderRequest = OrderRequest.toRequest(order);
-        return jsonCreator.toJson(orderRequest);
+        return jsonUtil.toJson(orderRequest);
     }
 
     @Override

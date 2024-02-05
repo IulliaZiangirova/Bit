@@ -3,9 +3,8 @@ package bitmexbot.service;
 import bitmexbot.model.AuthenticationHeaders;
 import bitmexbot.model.Order;
 import bitmexbot.util.AuthenticationHeadersCreator;
-import bitmexbot.util.HttpRequestCreator;
-import bitmexbot.util.JsonCreator;
-import java.net.URI;
+import bitmexbot.util.JsonUtil;
+
 import java.net.http.HttpRequest;
 
 public class CancelOrderRequest extends BasicOrderRequest {
@@ -16,7 +15,7 @@ public class CancelOrderRequest extends BasicOrderRequest {
     private String orderId;
     private final String apiSecretKey;
     private final String apiKey;
-    private JsonCreator jsonCreator = new JsonCreator();
+    private JsonUtil jsonUtil = new JsonUtil();
 
 
     public CancelOrderRequest(String orderId, String baseUrl, String apiSecretKey, String apiKey) {
@@ -38,7 +37,7 @@ public class CancelOrderRequest extends BasicOrderRequest {
         Order order = Order.builder()
                 .orderID(orderId)
                 .build();
-        return jsonCreator.toJson(order);}
+        return jsonUtil.toJson(order);}
     }
 
     private AuthenticationHeaders getAuthenticationHeaders(){

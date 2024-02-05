@@ -38,8 +38,8 @@ public class OrderDao {
             Transaction transaction = session.getTransaction();
             transaction.begin();
             Order orderUpdate = session.find(Order.class, order.getOrderID());
-            orderUpdate.setWorkingIndicator(false);
-            orderUpdate.setOrdStatus(OrderStatus.CANCELED);
+            orderUpdate.setWorkingIndicator(order.isWorkingIndicator());
+            orderUpdate.setOrdStatus(order.getOrdStatus());
             session.merge(orderUpdate);
             transaction.commit();
         }catch (Exception e){

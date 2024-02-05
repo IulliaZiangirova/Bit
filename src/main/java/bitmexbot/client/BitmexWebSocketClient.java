@@ -1,19 +1,14 @@
 package bitmexbot.client;
 
 import bitmexbot.service.BotExecutor;
-import bitmexbot.util.JsonCreator;
 import bitmexbot.util.SignatureCreator;
 import jakarta.websocket.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.tyrus.spi.ClientContainer;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.Signature;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 @ClientEndpoint
 @Slf4j

@@ -3,7 +3,7 @@ package bitmexbot.service;
 import bitmexbot.client.BitmexWebSocketClient;
 import bitmexbot.dao.OrderDao;
 import bitmexbot.model.*;
-import bitmexbot.util.JsonCreator;
+import bitmexbot.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ public class BotExecutor {
     private final String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
     private final String apiSecret = "i_dE1FKK42t64fB7qMLcaYL0xfe3yqaR2LqouYqf-HM02QCP";
     private Double startPrice;
-    private JsonCreator jsonCreator = new JsonCreator();
+    private JsonUtil jsonUtil = new JsonUtil();
     private Bot bot;
     private Order [] activeOrders;
     private BitmexClient bitmexClient = BitmexClientFactory.newTestnetBitmexClient(apiKey, apiSecret);
@@ -26,7 +26,7 @@ public class BotExecutor {
     public void start(){
         bitmexWebSocketClient.connect();
         bitmexWebSocketClient.setBotExecutor(this);
-        initBot(100, 5, 100);
+        initBot(100, 3, 100);
         bot.setSequenceFibonacci(initSequenceFibonacci(6));
     }
 
@@ -46,16 +46,25 @@ public class BotExecutor {
     }
 
     public void parsData(String message){
-        if (message.contains("\"table\":\"order\"")){
-            activeOrders = jsonCreator.parsOrders(message);
-            checkOrders(activeOrders);
+        if (message.contains("table\":\"order\",\"action\":\"update\"")){
+            Order updatedOrder = jsonUtil.fromJson(message);
+            orderDao.merge(updatedOrder);
         }
-
         if (message.contains("\"table\":\"trade\"")){
-            Double price = jsonCreator.parsStartPrice(message);
+            Double price = jsonUtil.parsStartPrice(message);
             this.startPrice = price;
             log.info("Start price: " + price);
         }
+    }
+
+    public void checkOrderForUpdating(Order order) {
+        System.out.println(order);
+        if(!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.CANCELED){
+            orderDao.merge(order);
+        } else if (!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.FILLED){
+            orderDao.merge1(order);
+        };
+
     }
 
     public void checkOrders(Order [] orders) {
@@ -80,7 +89,7 @@ public class BotExecutor {
     }
 
     public Double setStartPriceFromWebsocket(String message){
-        return jsonCreator.parsStartPrice(message);
+        return jsonUtil.parsStartPrice(message);
     }
 
     private int[]  initSequenceFibonacci(int levelFibonacci){
