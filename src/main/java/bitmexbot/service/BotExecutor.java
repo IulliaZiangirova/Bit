@@ -16,9 +16,8 @@ public class BotExecutor {
     private final String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
     private final String apiSecret = "i_dE1FKK42t64fB7qMLcaYL0xfe3yqaR2LqouYqf-HM02QCP";
     private Double startPrice;
-    private JsonUtil jsonUtil = new JsonUtil();
+    private final JsonUtil jsonUtil = new JsonUtil();
     private Bot bot;
-    private Order [] activeOrders;
     private BitmexClient bitmexClient = BitmexClientFactory.newTestnetBitmexClient(apiKey, apiSecret);
     private final BitmexWebSocketClient bitmexWebSocketClient = new BitmexWebSocketClient();
     private OrderDao orderDao = new OrderDao();
@@ -26,7 +25,7 @@ public class BotExecutor {
     public void start(){
         bitmexWebSocketClient.connect();
         bitmexWebSocketClient.setBotExecutor(this);
-        initBot(100, 3, 100);
+        initBot(100, 1, 100);
         bot.setSequenceFibonacci(initSequenceFibonacci(6));
     }
 
@@ -46,8 +45,8 @@ public class BotExecutor {
     }
 
     public void parsData(String message){
-        if (message.contains("table\":\"order\",\"action\":\"update\"")){
-            Order updatedOrder = jsonUtil.fromJson(message);
+        if (message.contains("\"table\":\"order\",\"action\":\"update\"")){
+            Order updatedOrder = jsonUtil.parserOrder(message);
             orderDao.merge(updatedOrder);
         }
         if (message.contains("\"table\":\"trade\"")){

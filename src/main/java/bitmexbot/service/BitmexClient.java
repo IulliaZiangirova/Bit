@@ -63,8 +63,7 @@ public class BitmexClient {
     private void getResponseWithOrder(BasicOrderRequest httpRequest){
         try {
             HttpResponse<String> response  = httpClient.send(httpRequest.getHttpRequest(), HttpResponse.BodyHandlers.ofString());
-            Order newOrder = jsonUtil.fromJson(response.body());
-            //orderRepository.save(newOrder);
+            Order newOrder = jsonUtil.fromJsonMy(response.body());
             orderDao.save(newOrder);
             System.out.println(newOrder);
             System.out.println(response.body());
