@@ -2,6 +2,7 @@ package bitmexbot;
 
 
 import bitmexbot.client.BitmexWebSocketClient;
+import bitmexbot.dao.OrderDao;
 import bitmexbot.model.Order;
 import bitmexbot.model.OrderType;
 import bitmexbot.model.Symbol;
@@ -27,6 +28,9 @@ public class App {
         }
 
         botExecutor.stop();
+
+        //botExecutor.reconstructSellOrders(new Order(), 1);
+
 
 
     }

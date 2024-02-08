@@ -1,5 +1,8 @@
 package bitmexbot.model;
 
+import lombok.ToString;
+
+@ToString
 public class OrderRequest {
     private final String symbol;
     private final String side;

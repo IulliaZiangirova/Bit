@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 
 @Setter
 @Getter
@@ -53,6 +54,7 @@ public class BotExecutor {
                     .symbol(Symbol.XBTUSD)
                     .price(orderPrice)
                     .build();
+            System.out.println("сделали ор" + order);
             bitmexClient.sendOrder(order);
         }
     }
@@ -69,20 +71,23 @@ public class BotExecutor {
         }
     }
 
-    public void reconstructSellOrders(Order order) {
-       List<Order> ordersToClose = orderDao.findSellOrders();
+    public void reconstructSellOrders(Order order, int count) {
+        Optional<List<Order>> sellOr = orderDao.findSellOr();
+        List<Order> ordersToClose = sellOr.get();
+        System.out.println(ordersToClose);
         for (Order orderToClose : ordersToClose) {
             bitmexClient.cancelOrderById(orderToClose.getOrderID());
         }
-        sendOrders(order.getPrice(), ordersToClose.size() + 1, "Sell");
+        sendOrders(order.getPrice(), ordersToClose.size() + count, "Sell");
+        //sendOrders(order.getPrice(), count, "Sell");
        }
 
     private void checkUpdatedOrdersAndMakeChanges (Order [] orders){
         for (Order order: orders) {
             orderDao.merge(order);
-            if (order.getOrdStatus() == OrderStatus.FILLED && order.getSide().equals("Buy")){
-                reconstructSellOrders(order);
-            }
+        }
+        if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Buy")){
+            reconstructSellOrders(orders[0], orders.length);
         }
     }
 

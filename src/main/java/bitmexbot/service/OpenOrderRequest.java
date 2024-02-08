@@ -33,7 +33,9 @@ public class OpenOrderRequest extends BasicOrderRequest {
 
     private String getData() {
         OrderRequest orderRequest = OrderRequest.toRequest(order);
-        return jsonUtil.toJson(orderRequest);
+        System.out.println("req" + orderRequest);
+        System.out.println(jsonUtil.toJsonForRequest(orderRequest));
+        return jsonUtil.toJsonForRequest(orderRequest);
     }
 
     @Override

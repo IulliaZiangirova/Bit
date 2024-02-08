@@ -48,6 +48,15 @@ public class OrderDao {
         return list;
     }
 
+    public Optional<List<Order>>findSellOr (){
+        Session session = sessionFactory.openSession();
+        Query<Order> orders = session.createQuery("select o from Order o where o.side = 'Sell' and o.workingIndicator is true ", Order.class);
+        //orders.setParameter("side", "Sell");
+        List<Order> list = orders.list();
+        System.out.println(list);
+        return Optional.ofNullable(list);
+    }
+
 
 
 }

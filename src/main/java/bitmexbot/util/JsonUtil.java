@@ -11,6 +11,10 @@ public class JsonUtil {
     private static final Gson gsonWithoutFields = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public String toJson(Object object) {
+        return gsonWithoutFields.toJson(object);
+    }
+
+    public String toJsonForRequest(Object object) {
         return gson.toJson(object);
     }
 
