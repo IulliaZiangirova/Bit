@@ -5,12 +5,14 @@ import bitmexbot.dao.OrderDao;
 import bitmexbot.model.*;
 import bitmexbot.repository.OrderRepository;
 import bitmexbot.util.JsonUtil;
+import lombok.ToString;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
 
+@ToString
 public class BitmexClient {
     //send request to Bitmex
 

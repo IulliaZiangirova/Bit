@@ -32,5 +32,12 @@ public class JsonUtil {
         return order;
     }
 
+    public Order [] parsOrders (String message){
+        JsonObject jsonObject = gson.fromJson(message, JsonObject.class);
+        String str = jsonObject.get("data").toString();
+        Order [] orders = gsonWithoutFields.fromJson(str,Order[].class);
+        return orders;
+    }
+
 }
 

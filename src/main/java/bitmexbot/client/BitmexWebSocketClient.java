@@ -1,6 +1,7 @@
 package bitmexbot.client;
 
 import bitmexbot.service.BotExecutor;
+import bitmexbot.util.Endpoints;
 import bitmexbot.util.SignatureCreator;
 import jakarta.websocket.*;
 import lombok.Data;
@@ -18,22 +19,26 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Data
 public class BitmexWebSocketClient {
-    private final String serverUri = "wss://ws.testnet.bitmex.com/realtime?subscribe";
-    private final String serverUri1 = "wss://ws.testnet.bitmex.com/realtime?subscribe=order";
+    //private final String serverUri = "wss://ws.testnet.bitmex.com/realtime?subscribe";
     private Session session;
     private WebSocketContainer container;
     private String userId;
     private Boolean isConnected;
-    private String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
-    private String apiSecret = "i_dE1FKK42t64fB7qMLcaYL0xfe3yqaR2LqouYqf-HM02QCP";
+    private final String apiKey;
+    private final String apiSecret;
     private BotExecutor botExecutor;
-    private ScheduledExecutorService pingTimer =Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService pingTimer =Executors.newSingleThreadScheduledExecutor();
 
+
+    public BitmexWebSocketClient(String apiKey, String apiSecret){
+        this.apiSecret = apiSecret;
+        this.apiKey = apiKey;
+    }
 
     public void connect(){
         try{
             container = ContainerProvider.getWebSocketContainer();
-            session = container.connectToServer(this, new URI(serverUri));
+            session = container.connectToServer(this, new URI(Endpoints.WEBSOCKET_URI));
             if(session.isOpen()){
                isConnected = true;
                 log.info("Session is open");
@@ -73,7 +78,6 @@ public class BitmexWebSocketClient {
 
     @OnMessage
     public void onMessagePong(PongMessage pongMessage){
-        System.out.println("Pong");
     }
 
     @OnError

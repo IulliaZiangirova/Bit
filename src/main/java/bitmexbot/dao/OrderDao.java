@@ -6,6 +6,10 @@ import bitmexbot.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
+import java.util.List;
+import java.util.Optional;
 
 public class OrderDao {
     private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
@@ -22,17 +26,6 @@ public class OrderDao {
     }
 
 
-//    public void update (Order order){
-//        try (Session session = sessionFactory.openSession();) {
-//            Transaction transaction = session.getTransaction();
-//            transaction.begin();
-//            session.m(order);
-//            transaction.commit();
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
-
     public void merge (Order order){
         try (Session session = sessionFactory.openSession();) {
             Transaction transaction = session.getTransaction();
@@ -47,18 +40,14 @@ public class OrderDao {
         }
     }
 
-    public void merge1 (Order order){
-        try (Session session = sessionFactory.openSession();) {
-            Transaction transaction = session.getTransaction();
-            transaction.begin();
-            Order orderUpdate = session.find(Order.class, order.getOrderID());
-            orderUpdate.setWorkingIndicator(false);
-            orderUpdate.setOrdStatus(OrderStatus.FILLED);
-            session.merge(orderUpdate);
-            transaction.commit();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+    public List<Order> findSellOrders (){
+        Session session = sessionFactory.openSession();
+        Query<Order> orders = session.createQuery("select o from Order o where o.side = :side and o.workingIndicator = true ", Order.class);
+        orders.setParameter("side", "Sell");
+        List<Order> list = orders.list();
+        return list;
     }
+
+
 
 }

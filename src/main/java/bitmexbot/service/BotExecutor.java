@@ -4,80 +4,87 @@ import bitmexbot.client.BitmexWebSocketClient;
 import bitmexbot.dao.OrderDao;
 import bitmexbot.model.*;
 import bitmexbot.util.JsonUtil;
+import bitmexbot.util.PropertyUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Setter
 @Getter
 @Slf4j
 public class BotExecutor {
 
-    private final String apiKey = "GfibqQZKf1KvKJJ4BwK63-QJ";
-    private final String apiSecret = "i_dE1FKK42t64fB7qMLcaYL0xfe3yqaR2LqouYqf-HM02QCP";
-    private Double startPrice;
+    private final String apiKey;
+    private final String apiSecret;
+    private final BitmexClient bitmexClient;
     private final JsonUtil jsonUtil = new JsonUtil();
+    private final BitmexWebSocketClient bitmexWebSocketClient;
+    private final OrderDao orderDao = new OrderDao();
+    private final PropertyUtil propertyUtil = new PropertyUtil();
     private Bot bot;
-    private BitmexClient bitmexClient = BitmexClientFactory.newTestnetBitmexClient(apiKey, apiSecret);
-    private final BitmexWebSocketClient bitmexWebSocketClient = new BitmexWebSocketClient();
-    private OrderDao orderDao = new OrderDao();
+
+
+    public BotExecutor(){
+        this.apiKey = propertyUtil.get("apiKey");
+        this.apiSecret = propertyUtil.get("apiSecret");
+        this.bitmexClient = BitmexClientFactory.newTestnetBitmexClient(propertyUtil.get("apiKey"), propertyUtil.get("apiSecret"));
+        this.bitmexWebSocketClient = new BitmexWebSocketClient(propertyUtil.get("apiKey"), propertyUtil.get("apiSecret"));
+    }
 
     public void start(){
         bitmexWebSocketClient.connect();
         bitmexWebSocketClient.setBotExecutor(this);
-        initBot(100, 1, 100);
+        initBot(100, 5, 100);
         bot.setSequenceFibonacci(initSequenceFibonacci(6));
     }
 
-    public void logic(){
-        Double price = startPrice - bot.getStep();
-        for (int i = 0; i < bot.getLevel(); i++) {
+
+    private void sendOrders(Double price, int orderCount, String side){
+        Double orderPrice = price;
+        int sign = side.equals("Buy") ? -1 : 1;
+        for (int i = 0; i < orderCount; i++) {
+            orderPrice = orderPrice + sign * bot.getStep() * bot.getSequenceFibonacci()[i];
             Order order = Order.builder()
                     .orderQty(bot.getSequenceFibonacci()[i] * bot.getCoefficient() )
                     .ordType(OrderType.LMT)
-                    .side("Buy")
+                    .side(side)
                     .symbol(Symbol.XBTUSD)
-                    .price(price)
+                    .price(orderPrice)
                     .build();
             bitmexClient.sendOrder(order);
-            price = price - bot.getStep() * bot.getSequenceFibonacci()[i];
         }
     }
 
     public void parsData(String message){
         if (message.contains("\"table\":\"order\",\"action\":\"update\"")){
-            Order updatedOrder = jsonUtil.parserOrder(message);
-            orderDao.merge(updatedOrder);
+            Order [] updatedOrders = jsonUtil.parsOrders(message);
+            checkUpdatedOrdersAndMakeChanges(updatedOrders);
         }
         if (message.contains("\"table\":\"trade\"")){
             Double price = jsonUtil.parsStartPrice(message);
-            this.startPrice = price;
             log.info("Start price: " + price);
+            sendOrders(price, bot.getLevel(), "Buy");
         }
     }
 
-    public void checkOrderForUpdating(Order order) {
-        System.out.println(order);
-        if(!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.CANCELED){
+    public void reconstructSellOrders(Order order) {
+       List<Order> ordersToClose = orderDao.findSellOrders();
+        for (Order orderToClose : ordersToClose) {
+            bitmexClient.cancelOrderById(orderToClose.getOrderID());
+        }
+        sendOrders(order.getPrice(), ordersToClose.size() + 1, "Sell");
+       }
+
+    private void checkUpdatedOrdersAndMakeChanges (Order [] orders){
+        for (Order order: orders) {
             orderDao.merge(order);
-        } else if (!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.FILLED){
-            orderDao.merge1(order);
-        };
-
-    }
-
-    public void checkOrders(Order [] orders) {
-        for (Order order : orders) {
-            System.out.println(order);
-            if(!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.CANCELED){
-                orderDao.merge(order);
-            } else if (!order.isWorkingIndicator() && order.getOrdStatus() == OrderStatus.FILLED){
-                orderDao.merge1(order);
-            };
-
+            if (order.getOrdStatus() == OrderStatus.FILLED && order.getSide().equals("Buy")){
+                reconstructSellOrders(order);
             }
         }
-
+    }
 
     public void stop(){
         bitmexWebSocketClient.disconnect();
@@ -87,9 +94,6 @@ public class BotExecutor {
         this.bot = new Bot(step, level, coefficient);
     }
 
-    public Double setStartPriceFromWebsocket(String message){
-        return jsonUtil.parsStartPrice(message);
-    }
 
     private int[]  initSequenceFibonacci(int levelFibonacci){
         int[] sequence = new int[levelFibonacci];
