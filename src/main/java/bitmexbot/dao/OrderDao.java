@@ -58,5 +58,14 @@ public class OrderDao {
     }
 
 
+    public Optional<Order> findBuyOrderWithLastPrice (Double price){
+        Session session = sessionFactory.openSession();
+        Query<Order> order = session.createQuery("select o from Order o where o.price = :price and o.workingIndicator is true", Order.class);
+        order.setParameter("price", price);
+        Order singleResultOrNull = order.getSingleResultOrNull();
+        return Optional.ofNullable(singleResultOrNull);
+
+    }
+
 
 }

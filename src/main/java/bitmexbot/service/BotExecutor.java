@@ -26,6 +26,8 @@ public class BotExecutor {
     private final PropertyUtil propertyUtil = new PropertyUtil();
     private Bot bot;
 
+    private Double lastFilledPrice;
+
 
     public BotExecutor(){
         this.apiKey = propertyUtil.get("apiKey");
@@ -42,7 +44,7 @@ public class BotExecutor {
     }
 
 
-    private void sendOrders(Double price, int orderCount, String side){
+    private void sendOrdersByFibonachi(Double price, int orderCount, String side){
         Double orderPrice = price;
         int sign = side.equals("Buy") ? -1 : 1;
         for (int i = 0; i < orderCount; i++) {
@@ -54,10 +56,11 @@ public class BotExecutor {
                     .symbol(Symbol.XBTUSD)
                     .price(orderPrice)
                     .build();
-            System.out.println("сделали ор" + order);
             bitmexClient.sendOrder(order);
         }
     }
+
+
 
     public void parsData(String message){
         if (message.contains("\"table\":\"order\",\"action\":\"update\"")){
@@ -67,7 +70,7 @@ public class BotExecutor {
         if (message.contains("\"table\":\"trade\"")){
             Double price = jsonUtil.parsStartPrice(message);
             log.info("Start price: " + price);
-            sendOrders(price, bot.getLevel(), "Buy");
+            sendOrdersByFibonachi(price, bot.getLevel(), "Buy");
         }
     }
 
@@ -78,17 +81,41 @@ public class BotExecutor {
         for (Order orderToClose : ordersToClose) {
             bitmexClient.cancelOrderById(orderToClose.getOrderID());
         }
-        sendOrders(order.getPrice(), ordersToClose.size() + count, "Sell");
+        sendOrdersByFibonachi(order.getPrice(), ordersToClose.size() + count, "Sell");
         //sendOrders(order.getPrice(), count, "Sell");
        }
+
+    private void resendBuyOrder(Double price, double orderQty){
+        double qty = orderQty;
+        Optional<Order> buyOrder = orderDao.findBuyOrderWithLastPrice(price);
+        if (buyOrder.isPresent()){
+            Order order = buyOrder.get();
+            qty += order.getOrderQty();
+            bitmexClient.cancelOrderById(order.getOrderID());
+        }
+        Order order = Order.builder()
+                .orderQty(qty)
+                .ordType(OrderType.LMT)
+                .side("Buy")
+                .symbol(Symbol.XBTUSD)
+                .price(price)
+                .build();
+        bitmexClient.sendOrder(order);
+    }
 
     private void checkUpdatedOrdersAndMakeChanges (Order [] orders){
         for (Order order: orders) {
             orderDao.merge(order);
         }
         if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Buy")){
+            lastFilledPrice = orders[0].getPrice();
             reconstructSellOrders(orders[0], orders.length);
         }
+        else if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Sell")){
+            resendBuyOrder(lastFilledPrice, orders[0].getOrderQty()); //тут сумма орднров должна быть
+        }
+
+
     }
 
     public void stop(){
