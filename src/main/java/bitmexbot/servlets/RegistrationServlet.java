@@ -8,10 +8,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("")
-public class BitmexServlet extends HttpServlet {
+@WebServlet(name = "RegistrationServlet", value = "/registration")
+public class RegistrationServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.getWriter().write("Hello");
+        resp.getWriter().write("Здесь должна быть регистрация");
     }
 }
