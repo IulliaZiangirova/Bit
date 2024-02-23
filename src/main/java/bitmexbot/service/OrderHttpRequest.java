@@ -2,10 +2,14 @@ package bitmexbot.service;
 
 import bitmexbot.util.AuthenticationHeadersCreator;
 import bitmexbot.util.HttpRequestCreator;
+import lombok.Data;
+import lombok.Getter;
 
 import java.net.http.HttpRequest;
 
-public abstract class BasicOrderRequest {
+@Data
+@Getter
+public class BasicOrderRequest {
 
     protected final String ENDPOINT_ORDER = "/order";
     protected final String PATH = "/api/v1/order";
@@ -14,10 +18,12 @@ public abstract class BasicOrderRequest {
     protected HttpRequest.BodyPublisher bodyPublishers;
 
 
-    abstract void createHttpRequest(String baseUrl);
+     void createHttpRequest(String baseUrl){};
 
-    public HttpRequest getHttpRequest() {
-        return httpRequest;
+    public BasicOrderRequest(HttpRequest httpRequest) {
+        this.httpRequest = httpRequest;
     }
+
+
 }
 
