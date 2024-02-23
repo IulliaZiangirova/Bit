@@ -25,7 +25,6 @@ public class BotExecutor {
     private final OrderDao orderDao = new OrderDao();
     private final PropertyUtil propertyUtil = new PropertyUtil();
     private Bot bot;
-
     private Double lastFilledPrice;
 
 
@@ -103,20 +102,19 @@ public class BotExecutor {
         bitmexClient.sendOrder(order);
     }
 
-    private void checkUpdatedOrdersAndMakeChanges (Order [] orders){
-        for (Order order: orders) {
+    private void checkUpdatedOrdersAndMakeChanges (Order [] orders) {
+        for (Order order : orders) {
             orderDao.merge(order);
         }
-        if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Buy")){
+        if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Buy")) {
             lastFilledPrice = orders[0].getPrice();
             reconstructSellOrders(orders[0], orders.length);
-        }
-        else if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Sell")){
+        } else if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Sell")) {
+            //reconstructSellOrders(orders[0], orders.length);
             resendBuyOrder(lastFilledPrice, orders[0].getOrderQty()); //тут сумма орднров должна быть
         }
-
-
     }
+
 
     public void stop(){
         bitmexWebSocketClient.disconnect();

@@ -7,10 +7,12 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-  <head>
-    <title>$Title$</title>
-  </head>
-  <body>
-  $END$
-  </body>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<h1>Hello! Need to choose</h1>
+<button onclick="location.href='/registration'">Registration</button>
+<button onclick="location.href='/bot'">Bot</button>
+</body>
 </html>

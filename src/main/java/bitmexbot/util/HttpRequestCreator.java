@@ -8,7 +8,7 @@ import java.net.http.HttpRequest;
 public class HttpRequestCreator {
 
 
-    public HttpRequest getHttpRequest(String baseUrl, AuthenticationHeaders authenticationHeaders, String endpoint, String method,HttpRequest.BodyPublisher bodyPublishers){
+    public static HttpRequest getHttpRequest(String baseUrl, AuthenticationHeaders authenticationHeaders, String endpoint, String method,HttpRequest.BodyPublisher bodyPublishers){
 
        HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + endpoint))

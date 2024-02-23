@@ -3,6 +3,7 @@ package bitmexbot;
 
 import bitmexbot.client.BitmexWebSocketClient;
 import bitmexbot.dao.OrderDao;
+import bitmexbot.dao.UserDao;
 import bitmexbot.model.Order;
 import bitmexbot.model.OrderType;
 import bitmexbot.model.Symbol;
@@ -13,6 +14,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import bitmexbot.model.User;
 
 public class App {
 
@@ -30,6 +32,13 @@ public class App {
         botExecutor.stop();
 
         //botExecutor.reconstructSellOrders(new Order(), 1);
+
+
+//        User user = new User ("Yulia", "1111");
+//        UserDao userDao = new UserDao();
+//        userDao.save(user);
+
+
 
 
 

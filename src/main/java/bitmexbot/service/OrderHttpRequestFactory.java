@@ -10,38 +10,38 @@ import bitmexbot.util.JsonUtil;
 
 import java.net.http.HttpRequest;
 
-public class OrderRequestFactory {
+public class OrderHttpRequestFactory {
 
-    protected final HttpRequestCreator httpRequestCreator = new HttpRequestCreator();
+
     private String httpMethod;
     private final String apiSecretKey;
     private final String apiKey;
     private final String baseUrl;
-    private final JsonUtil jsonUtil = new JsonUtil();
+    private static final JsonUtil jsonUtil = new JsonUtil();
 
-    public OrderRequestFactory(String baseUrl, String apiSecretKey, String apiKey) {
+    public OrderHttpRequestFactory(String baseUrl, String apiSecretKey, String apiKey) {
         this.baseUrl = baseUrl;
         this.apiSecretKey = apiSecretKey;
         this.apiKey = apiKey;
     }
 
-    public OrderHttpRequest sendOrderRequest(Order order){
+    public HttpRequest sendOrderRequest(Order order){
         httpMethod = "POST";
-        return new OrderHttpRequest(createHttpRequest(order, httpMethod));
+        return createHttpRequest(order, httpMethod);
     }
 
-    public OrderHttpRequest cancelOrderRequest(String orderId){
+    public HttpRequest cancelOrderRequest(String orderId){
         httpMethod = "DELETE";
         Order order = Order.builder()
                 .orderID(orderId)
                 .build();
-        return new OrderHttpRequest(createHttpRequest(order, httpMethod));
+        return createHttpRequest(order, httpMethod);
     }
 
 
     private HttpRequest createHttpRequest(Order order, String httpMethod) {
         HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(getData(order));
-        return httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(order, httpMethod), Endpoints.ORDER_ENDPOINT, httpMethod, bodyPublishers );
+        return HttpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(order, httpMethod), Endpoints.ORDER_ENDPOINT, httpMethod, bodyPublishers );
     }
 
     private String getData(String orderId) {
@@ -61,8 +61,7 @@ public class OrderRequestFactory {
 
     private AuthenticationHeaders getAuthenticationHeaders(Order order, String httpMethod){
         AuthenticationHeadersCreator authenticationHeadersCreator = new AuthenticationHeadersCreator();
-        AuthenticationHeaders authenticationHeaders = authenticationHeadersCreator.getAuthenticationHeaders(httpMethod, getData(order), Endpoints.PATH_FOR_REQUEST, apiSecretKey, apiKey);
-        return authenticationHeaders;
+        return authenticationHeadersCreator.getAuthenticationHeaders(httpMethod, getData(order), Endpoints.PATH_FOR_REQUEST, apiSecretKey, apiKey);
     }
 
 

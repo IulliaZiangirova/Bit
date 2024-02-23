@@ -1,6 +1,5 @@
 package bitmexbot.model;
 
-import bitmexbot.repository.OrderRepository;
 import lombok.Data;
 import lombok.Getter;
 
@@ -12,7 +11,6 @@ public class Bot {
     private int level;
     private double coefficient;
     private int[] sequenceFibonacci;
-    private OrderRepository orderRepository; //созданные ордера
     private int miniLevel; //уровень контрордеров
 
     public Bot(double step, int level, double coefficient) {
