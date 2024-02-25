@@ -1,16 +1,19 @@
-//package bitmexbot.service;
-//
-//import bitmexbot.model.AuthenticationHeaders;
-//import bitmexbot.model.Order;
-//import bitmexbot.model.OrderRequest;
-//import bitmexbot.util.AuthenticationHeadersCreator;
-//import bitmexbot.util.JsonUtil;
-//
-//
-//import java.net.http.HttpRequest;
-//
-//public class OpenOrderRequest extends OrderHttpRequest {
-//
+package bitmexbot.service;
+
+import bitmexbot.model.AuthenticationHeaders;
+import bitmexbot.model.Order;
+import bitmexbot.model.OrderRequest;
+import bitmexbot.util.AuthenticationHeadersCreator;
+import bitmexbot.util.JsonUtil;
+
+
+import java.net.http.HttpRequest;
+
+public class OpenOrderRequest extends OrderHttpRequest {
+    public OpenOrderRequest(HttpRequest httpRequest) {
+        super(httpRequest);
+    }
+
 //    private final String HTTP_METHOD_POST= "POST";
 //    private AuthenticationHeaders authenticationHeaders;
 //    private final Order order;
@@ -43,6 +46,6 @@
 //        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(getData());
 //        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_POST, bodyPublishers );
 //    }
-//
-//
-//}
+
+
+}
