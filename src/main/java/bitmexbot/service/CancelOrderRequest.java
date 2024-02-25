@@ -1,14 +1,17 @@
-//package bitmexbot.service;
-//
-//import bitmexbot.model.AuthenticationHeaders;
-//import bitmexbot.model.Order;
-//import bitmexbot.util.AuthenticationHeadersCreator;
-//import bitmexbot.util.JsonUtil;
-//
-//import java.net.http.HttpRequest;
-//
-//public class CancelOrderRequest extends OrderHttpRequest {
-//
+package bitmexbot.service;
+
+import bitmexbot.model.AuthenticationHeaders;
+import bitmexbot.model.Order;
+import bitmexbot.util.AuthenticationHeadersCreator;
+import bitmexbot.util.JsonUtil;
+
+import java.net.http.HttpRequest;
+
+public class CancelOrderRequest extends OrderHttpRequest {
+    public CancelOrderRequest(HttpRequest httpRequest) {
+        super(httpRequest);
+    }
+
 //
 //    private final String HTTP_METHOD_DELETE = "DELETE";
 //    private AuthenticationHeaders authenticationHeaders;
@@ -48,4 +51,4 @@
 //     void createHttpRequest(String baseUrl) {
 //        httpRequest = httpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(),ENDPOINT_ORDER, HTTP_METHOD_DELETE, bodyPublishers );
 //    }
-//}
+}
