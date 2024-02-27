@@ -15,13 +15,17 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import bitmexbot.model.User;
+import bitmexbot.util.PropertyUtil;
 
 public class App {
 
     public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException {
 
-        BotExecutor botExecutor = new BotExecutor();
+      BotExecutor botExecutor = new BotExecutor();
+
         botExecutor.start();
+
+
 
         try {
             TimeUnit.SECONDS.sleep(10000);
@@ -31,7 +35,6 @@ public class App {
 
         botExecutor.stop();
 
-        //botExecutor.reconstructSellOrders(new Order(), 1);
 
 
 //        User user = new User ("Yulia", "1111");

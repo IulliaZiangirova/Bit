@@ -4,6 +4,7 @@ import lombok.ToString;
 
 @ToString
 public class OrderRequest {
+
     private final String symbol;
     private final String side;
     private final Double orderQty;
@@ -20,7 +21,9 @@ public class OrderRequest {
         this.stopPx = stopPx;
     }
 
-    public static OrderRequest toRequest(Order order){
+
+
+    public static OrderRequest toPostRequest(Order order){
         String symbol = order.getSymbol().toString();
         String side = order.getSide().toString();
         Double orderQty = order.getOrderQty();
@@ -30,6 +33,9 @@ public class OrderRequest {
 
         return new OrderRequest(symbol, side, orderQty, price, ordType, stopPx);
     }
+
+
+
 
     private static String getType(OrderType orderType){
         switch (orderType){

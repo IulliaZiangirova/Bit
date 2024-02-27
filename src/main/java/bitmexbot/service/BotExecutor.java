@@ -26,6 +26,7 @@ public class BotExecutor {
     private final PropertyUtil propertyUtil = new PropertyUtil();
     private Bot bot;
     private Double lastFilledPrice;
+    private Double startPrice;
 
 
     public BotExecutor(){
@@ -67,20 +68,42 @@ public class BotExecutor {
             checkUpdatedOrdersAndMakeChanges(updatedOrders);
         }
         if (message.contains("\"table\":\"trade\"")){
-            Double price = jsonUtil.parsStartPrice(message);
-            log.info("Start price: " + price);
-            sendOrdersByFibonachi(price, bot.getLevel(), "Buy");
+            startPrice = jsonUtil.parsStartPrice(message);
+            log.info("Start price: " + startPrice);
+            sendOrdersByFibonachi(startPrice, bot.getLevel(), "Buy");
         }
     }
 
-    public void reconstructSellOrders(Order order, int count) {
-        Optional<List<Order>> sellOr = orderDao.findSellOr();
-        List<Order> ordersToClose = sellOr.get();
+    private void checkUpdatedOrdersAndMakeChanges (Order [] orders) {
+        boolean needToReconstructSellOrders = false;
+        boolean needToReconstructBuyOrders = false;
+        double sellOrderQtySum = 0;
+        for (Order order : orders) {
+            orderDao.merge(order);
+            if(order.getSide().equals("Buy") && order.getOrdStatus() == OrderStatus.FILLED && order.getPrice() < lastFilledPrice){
+                lastFilledPrice = order.getPrice();
+                needToReconstructSellOrders = true;
+            }else if (order.getOrdStatus() == OrderStatus.FILLED && order.getSide().equals("Sell"))
+                if (order.getPrice() == startPrice){
+                    restartBot();
+                    return;
+                }
+        }
+        if (needToReconstructSellOrders) {
+            reconstructSellOrders(lastFilledPrice, orders.length);
+        } else if (needToReconstructBuyOrders){
+            resendBuyOrder(lastFilledPrice, sellOrderQtySum);
+        }
+    }
+
+    public void reconstructSellOrders(Double lastFilledPrice, int count) {
+        Optional<List<Order>> sellOrders = orderDao.findSellOpenOrders();
+        List<Order> ordersToClose = sellOrders.get();
         System.out.println(ordersToClose);
         for (Order orderToClose : ordersToClose) {
             bitmexClient.cancelOrderById(orderToClose.getOrderID());
         }
-        sendOrdersByFibonachi(order.getPrice(), ordersToClose.size() + count, "Sell");
+        sendOrdersByFibonachi(lastFilledPrice, ordersToClose.size() + count, "Sell");
         //sendOrders(order.getPrice(), count, "Sell");
        }
 
@@ -102,18 +125,14 @@ public class BotExecutor {
         bitmexClient.sendOrder(order);
     }
 
-    private void checkUpdatedOrdersAndMakeChanges (Order [] orders) {
-        for (Order order : orders) {
-            orderDao.merge(order);
-        }
-        if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Buy")) {
-            lastFilledPrice = orders[0].getPrice();
-            reconstructSellOrders(orders[0], orders.length);
-        } else if (orders[0].getOrdStatus() == OrderStatus.FILLED && orders[0].getSide().equals("Sell")) {
-            //reconstructSellOrders(orders[0], orders.length);
-            resendBuyOrder(lastFilledPrice, orders[0].getOrderQty()); //тут сумма орднров должна быть
-        }
+    public void restartBot(){
+        System.out.println("Restart bot");
+        bitmexClient.cancelAllOrders();
+       // stop();
+       // start();
     }
+
+
 
 
     public void stop(){

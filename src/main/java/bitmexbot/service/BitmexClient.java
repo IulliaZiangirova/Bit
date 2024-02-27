@@ -46,21 +46,21 @@ public class BitmexClient {
     }
 
     public void cancelOrderById(String orderId){
-        //orderHttpRequest = new CancelOrderRequest(orderId, baseUrl, apiSecretKey, apiKey);
         httpRequest = orderHttpRequestFactory.cancelOrderRequest(orderId);
         getResponse(httpRequest);
     }
 
-//    public void cancelAllOrders(String orderId){
-//        orderHttpRequest = new CancelOrderRequest(orderId, baseUrl, apiSecretKey, apiKey);
-//        getResponse(orderHttpRequest);
-//    }
+    public void cancelAllOrders(){
+        //orderHttpRequest = new CancelOrderRequest(orderId, baseUrl, apiSecretKey, apiKey);
+        httpRequest = orderHttpRequestFactory.cancelAllOrdersRequest();
+        getResponse(httpRequest);
+    }
 
     private void getResponse(HttpRequest httpRequest){
         try {
             HttpResponse<String> response  = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            //System.out.println(response.body());
             System.out.println(response.statusCode());
+            System.out.println(response.body());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

@@ -27,7 +27,7 @@ public class OrderHttpRequestFactory {
 
     public HttpRequest sendOrderRequest(Order order){
         httpMethod = "POST";
-        return createHttpRequest(order, httpMethod);
+        return createHttpRequest(order, httpMethod, Endpoints.ORDER_ENDPOINT);
     }
 
     public HttpRequest cancelOrderRequest(String orderId){
@@ -35,13 +35,18 @@ public class OrderHttpRequestFactory {
         Order order = Order.builder()
                 .orderID(orderId)
                 .build();
-        return createHttpRequest(order, httpMethod);
+        return createHttpRequest(order, httpMethod, Endpoints.ORDER_ENDPOINT);
+    }
+
+    public HttpRequest cancelAllOrdersRequest(){
+        httpMethod = "DELETE";
+        return createHttpRequest(null, httpMethod, Endpoints.ORDER_ENDPOINT + Endpoints.All_ENDPOINT);
     }
 
 
-    private HttpRequest createHttpRequest(Order order, String httpMethod) {
-        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(getData(order));
-        return HttpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(order, httpMethod), Endpoints.ORDER_ENDPOINT, httpMethod, bodyPublishers );
+    private HttpRequest createHttpRequest(Order order, String httpMethod, String endpoint) {
+        HttpRequest.BodyPublisher bodyPublishers = HttpRequest.BodyPublishers.ofString(getData(order, httpMethod));
+        return HttpRequestCreator.getHttpRequest(baseUrl, getAuthenticationHeaders(order, httpMethod, endpoint), endpoint, httpMethod, bodyPublishers );
     }
 
     private String getData(String orderId) {
@@ -54,14 +59,21 @@ public class OrderHttpRequestFactory {
             return jsonUtil.toJson(order);}
     }
 
-    private String getData(Order order) {
-        OrderRequest orderRequest = OrderRequest.toRequest(order);
-        return jsonUtil.toJsonForRequest(orderRequest);
+    private String getData(Order order, String httpMethod) {
+        if (order == null){
+            return "";
+        }
+        else if (httpMethod.equals("DELETE")){
+            return jsonUtil.toJson(order);
+        }else  {
+            OrderRequest orderRequest = OrderRequest.toPostRequest(order);
+            return jsonUtil.toJsonForRequest(orderRequest);
+        }
     }
 
-    private AuthenticationHeaders getAuthenticationHeaders(Order order, String httpMethod){
+    private AuthenticationHeaders getAuthenticationHeaders(Order order, String httpMethod, String endpoint){
         AuthenticationHeadersCreator authenticationHeadersCreator = new AuthenticationHeadersCreator();
-        return authenticationHeadersCreator.getAuthenticationHeaders(httpMethod, getData(order), Endpoints.PATH_FOR_REQUEST, apiSecretKey, apiKey);
+        return authenticationHeadersCreator.getAuthenticationHeaders(httpMethod, getData(order, httpMethod), Endpoints.PATH_FOR_REQUEST+endpoint, apiSecretKey, apiKey);
     }
 
 
