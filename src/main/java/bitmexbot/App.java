@@ -23,7 +23,9 @@ public class App {
 
       BotExecutor botExecutor = new BotExecutor();
 
-        botExecutor.start();
+       // botExecutor.reconstructSellOrders(50000., 1);
+
+      botExecutor.start();
 
 
 
@@ -41,6 +43,17 @@ public class App {
 //        UserDao userDao = new UserDao();
 //        userDao.save(user);
 
+ //      PropertyUtil propertyUtil = new PropertyUtil();
+//        BitmexClient bitmexClient = BitmexClientFactory.newTestnetBitmexClient(propertyUtil.get("apiKey"), propertyUtil.get("apiSecret"));
+//        Order order = Order.builder()
+//                .orderQty(100 )
+//                .ordType(OrderType.LMT)
+//                .side("Buy")
+//                .symbol(Symbol.XBTUSD)
+//                .price(50000.)
+//                .build();
+//
+  //      bitmexClient.cancelAllOrders();
 
 
 

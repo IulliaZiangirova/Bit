@@ -69,6 +69,7 @@ public class BotExecutor {
         }
         if (message.contains("\"table\":\"trade\"")){
             startPrice = jsonUtil.parsStartPrice(message);
+            lastFilledPrice = startPrice;
             log.info("Start price: " + startPrice);
             sendOrdersByFibonachi(startPrice, bot.getLevel(), "Buy");
         }
@@ -83,11 +84,19 @@ public class BotExecutor {
             if(order.getSide().equals("Buy") && order.getOrdStatus() == OrderStatus.FILLED && order.getPrice() < lastFilledPrice){
                 lastFilledPrice = order.getPrice();
                 needToReconstructSellOrders = true;
-            }else if (order.getOrdStatus() == OrderStatus.FILLED && order.getSide().equals("Sell"))
-                if (order.getPrice() == startPrice){
+            }else if (order.getSide().equals("Buy") && order.getOrdStatus() == OrderStatus.FILLED && order.getPrice().equals(lastFilledPrice)) {
+                //sendOrdersByFibonachi();
+            }else if (order.getOrdStatus() == OrderStatus.FILLED && order.getSide().equals("Sell")) {
+                System.out.println(order.getPrice());
+                System.out.println(startPrice);
+                if (order.getPrice().equals(startPrice)) {
                     restartBot();
                     return;
+                } else {
+                    sellOrderQtySum += order.getOrderQty();
+                    needToReconstructBuyOrders = true;
                 }
+            }
         }
         if (needToReconstructSellOrders) {
             reconstructSellOrders(lastFilledPrice, orders.length);
@@ -99,12 +108,10 @@ public class BotExecutor {
     public void reconstructSellOrders(Double lastFilledPrice, int count) {
         Optional<List<Order>> sellOrders = orderDao.findSellOpenOrders();
         List<Order> ordersToClose = sellOrders.get();
-        System.out.println(ordersToClose);
         for (Order orderToClose : ordersToClose) {
             bitmexClient.cancelOrderById(orderToClose.getOrderID());
         }
         sendOrdersByFibonachi(lastFilledPrice, ordersToClose.size() + count, "Sell");
-        //sendOrders(order.getPrice(), count, "Sell");
        }
 
     private void resendBuyOrder(Double price, double orderQty){
@@ -128,8 +135,8 @@ public class BotExecutor {
     public void restartBot(){
         System.out.println("Restart bot");
         bitmexClient.cancelAllOrders();
-       // stop();
-       // start();
+        stop();
+        start();
     }
 
 
