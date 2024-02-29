@@ -1,4 +1,4 @@
-package bitmexbot.servlets;
+package bitmexbot.web.servlets;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;

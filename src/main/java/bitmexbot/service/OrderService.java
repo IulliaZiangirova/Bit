@@ -1,2 +1,4 @@
-package bitmexbot.service;public class OrderService {
+package bitmexbot.service;
+
+public class OrderService {
 }

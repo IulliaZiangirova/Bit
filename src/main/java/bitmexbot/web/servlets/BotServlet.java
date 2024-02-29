@@ -1,6 +1,5 @@
-package bitmexbot.servlets;
+package bitmexbot.web.servlets;
 
-import bitmexbot.model.User;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

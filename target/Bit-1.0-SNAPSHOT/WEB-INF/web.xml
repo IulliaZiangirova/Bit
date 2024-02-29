@@ -6,7 +6,7 @@
 
     <servlet>
         <servlet-name>BotServlet</servlet-name>
-        <servlet-class>bitmexbot.servlets.BotServlet</servlet-class>
+        <servlet-class>bitmexbot.web.servlets.BotServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>BotServlet</servlet-name>
@@ -15,7 +15,7 @@
 
     <servlet>
         <servlet-name>RegistrationServlet</servlet-name>
-        <servlet-class>bitmexbot.servlets.RegistrationServlet</servlet-class>
+        <servlet-class>bitmexbot.web.servlets.RegistrationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>RegistrationServlet</servlet-name>
@@ -24,7 +24,7 @@
 
     <servlet>
         <servlet-name>StartServlet</servlet-name>
-        <servlet-class>bitmexbot.servlets.StartServlet</servlet-class>
+        <servlet-class>bitmexbot.web.servlets.StartServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>StartServlet</servlet-name>

@@ -12,5 +12,7 @@
 </head>
 <body>
 <h1>User successfully registered!</h1>
+<h1>Now you need to log in</h1>
+<button onclick="location.href='/log'">Log in</button>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package bitmexbot.servlets;
+package bitmexbot.web.servlets;
 
 import bitmexbot.dao.UserDao;
 import bitmexbot.model.User;
@@ -28,6 +28,6 @@ public class RegistrationServlet extends HttpServlet {
         String password = req.getParameter("pass");
         User user = new User(name, password);
         userDao.save(user);
-        resp.sendRedirect("views/employeedetails.jsp");
+        resp.sendRedirect("views/successregister.jsp");
     }
 }

@@ -8,11 +8,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Hello!</title>
 </head>
 <body>
-<h1>Hello! Need to choose</h1>
+<h1>Hello! If you have already registered - Log in. Else you need to register.  </h1>
 <button onclick="location.href='/registration'">Registration</button>
-<button onclick="location.href='/bot'">Bot</button>
+<button onclick="location.href='/log'">Log in</button>
 </body>
 </html>
