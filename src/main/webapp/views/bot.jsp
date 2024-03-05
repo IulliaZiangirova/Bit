@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Yulia
@@ -8,10 +9,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Bot</title>
 </head>
 <body>
-<h1>Choose settings</h1>
+<h1>Your bots</h1>
+ <table>
+     <tr>
+         <th>step</th>
+         <th>level</th>
+         <th>work</th>
+     </tr>
+     <jsp:useBean id="bots" scope="request" type="java.util.List"/>
+     <c:forEach items="${bots}" var ="bot">
+         <tr>
+             <td>${bot.step}</td>
+             <td>${bot.level}</td>
+             <td>${bot.level}</td>
+         </tr>
+     </c:forEach>
+ </table>
+
+<h1>Or you can create a new ot</h1>
 <form method="post">
     <label>Step:
         <input type="text" name="step"><br />

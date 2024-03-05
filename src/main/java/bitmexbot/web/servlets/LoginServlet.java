@@ -30,7 +30,7 @@ public class LoginServlet extends HttpServlet {
         if (isExist) {
             User user = usersService.findByName(userName);
             session.setAttribute("userName", userName);
-            session.setAttribute("id_user", user.getId());
+            session.setAttribute("user_id", user.getId());
             response.sendRedirect("views/bot.jsp");
         }else
         {
