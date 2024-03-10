@@ -30,4 +30,10 @@ public class UserService {
         }
         else return false;
     }
+
+    public void save (User user){
+        userDao.save(user);
+    }
+
+
 }

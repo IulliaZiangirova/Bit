@@ -8,6 +8,7 @@ import lombok.*;
 @Table(name = "bots")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Bot {
 
     @Id
@@ -25,7 +26,9 @@ public class Bot {
     @Column(name = "work_indicator")
     private boolean workingIndicator;
 
+    @Transient
     private int[] sequenceFibonacci;
+    @Transient
     private int miniLevel; //уровень контрордеров
 
     public Bot(double step, int level, double coefficient) {

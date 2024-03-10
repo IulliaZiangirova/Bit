@@ -22,9 +22,9 @@ public class LoginFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession(false);
         //URL Запроса/переадресации на Servlet входа
-        String loginURI = request.getContextPath() + "/InvateServlet";
+        String loginURI = request.getContextPath() + "/log";
         //Если сессия ранее создана
-        boolean loggedIn = session != null && session.getAttribute("userName") != null && session.getAttribute("userRole") != null;
+        boolean loggedIn = session != null && session.getAttribute("userName") != null;
         boolean loginRequest = request.getRequestURI().equals(loginURI);
         //Если запрос пришел со страницы с входом или сессия не пуста даем добро следовать дальше
         //Если нет ридерект на страницу входа

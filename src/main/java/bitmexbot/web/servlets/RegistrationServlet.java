@@ -1,20 +1,22 @@
 package bitmexbot.web.servlets;
 
+
 import bitmexbot.dao.UserDao;
 import bitmexbot.model.User;
+import bitmexbot.service.UserService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 @WebServlet(name = "RegistrationServlet", value = "/registration")
 public class RegistrationServlet extends HttpServlet {
 
     private static final UserDao userDao = new UserDao();
+    private static final UserService userService = new UserService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -27,7 +29,7 @@ public class RegistrationServlet extends HttpServlet {
         String name = req.getParameter("name");
         String password = req.getParameter("pass");
         User user = new User(name, password);
-        userDao.save(user);
+        userService.save(user);
         resp.sendRedirect("views/successregister.jsp");
     }
 }

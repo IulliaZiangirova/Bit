@@ -21,23 +21,23 @@ public class App {
 
     public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException {
 
-      BotExecutor botExecutor = new BotExecutor();
+     // BotExecutor botExecutor = new BotExecutor();
 
        // botExecutor.reconstructSellOrders(50000., 1);
 
-      botExecutor.start();
-
-
-
-        try {
-            TimeUnit.SECONDS.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        botExecutor.stop();
-
-
+//      botExecutor.start();
+//
+//
+//
+//        try {
+//            TimeUnit.SECONDS.sleep(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        botExecutor.stop();
+//
+//
 
 //        User user = new User ("Yulia", "1111");
 //        UserDao userDao = new UserDao();

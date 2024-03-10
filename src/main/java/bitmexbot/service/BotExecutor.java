@@ -29,22 +29,35 @@ public class BotExecutor {
     private Double startPrice;
 
 
-    public BotExecutor(){
+    public BotExecutor(Bot bot){
         this.apiKey = propertyUtil.get("apiKey");
         this.apiSecret = propertyUtil.get("apiSecret");
         this.bitmexClient = BitmexClientFactory.newTestnetBitmexClient(propertyUtil.get("apiKey"), propertyUtil.get("apiSecret"));
         this.bitmexWebSocketClient = new BitmexWebSocketClient(propertyUtil.get("apiKey"), propertyUtil.get("apiSecret"));
+        this.bot = bot;
     }
 
     public void start(){
         bitmexWebSocketClient.connect();
         bitmexWebSocketClient.setBotExecutor(this);
-        initBot(100, 5, 100);
-        bot.setSequenceFibonacci(initSequenceFibonacci(6));
+        //initBot(100, 5, 100);
+        bot.setSequenceFibonacci(initSequenceFibonacci(bot.getLevel()));
     }
 
 
-    private void sendOrdersByFibonachi(Double price, int orderCount, String side){
+    private int[]  initSequenceFibonacci(int levelFibonacci){
+        int[] sequence = new int[levelFibonacci];
+        sequence[0] = 1;
+        sequence[1] = 1;
+        sequence[2] = 1;
+        for (int i = 3; i < levelFibonacci; i++) {
+            sequence[i] = sequence[i - 1] + sequence[i - 2];
+        }
+        return sequence;
+    }
+
+
+    private void sendOrdersByFibonacci(Double price, int orderCount, String side){
         Double orderPrice = price;
         int sign = side.equals("Buy") ? -1 : 1;
         for (int i = 0; i < orderCount; i++) {
@@ -71,7 +84,7 @@ public class BotExecutor {
             startPrice = jsonUtil.parsStartPrice(message);
             lastFilledPrice = startPrice;
             log.info("Start price: " + startPrice);
-            sendOrdersByFibonachi(startPrice, bot.getLevel(), "Buy");
+            sendOrdersByFibonacci(startPrice, bot.getLevel(), "Buy");
         }
     }
 
@@ -111,7 +124,7 @@ public class BotExecutor {
         for (Order orderToClose : ordersToClose) {
             bitmexClient.cancelOrderById(orderToClose.getOrderID());
         }
-        sendOrdersByFibonachi(lastFilledPrice, ordersToClose.size() + count, "Sell");
+        sendOrdersByFibonacci(lastFilledPrice, ordersToClose.size() + count, "Sell");
        }
 
     private void resendBuyOrder(Double price, double orderQty){
@@ -139,26 +152,14 @@ public class BotExecutor {
         start();
     }
 
-
-
-
     public void stop(){
         bitmexWebSocketClient.disconnect();
     }
 
-    private void initBot(double step, int level, double coefficient){
-        this.bot = new Bot(step, level, coefficient);
-    }
+//    private void initBot(double step, int level, double coefficient){
+//        this.bot = new Bot(step, level, coefficient);
+//    }
 
 
-    private int[]  initSequenceFibonacci(int levelFibonacci){
-        int[] sequence = new int[levelFibonacci];
-        sequence[0] = 1;
-        sequence[1] = 1;
-        sequence[2] = 1;
-        for (int i = 3; i < levelFibonacci; i++) {
-            sequence[i] = sequence[i - 1] + sequence[i - 2];
-        }
-        return sequence;
-    }
+
 }

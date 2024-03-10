@@ -16,6 +16,7 @@
 
         <mapping class="bitmexbot.model.Order"/>
         <mapping class="bitmexbot.model.User"/>
+        <mapping class="bitmexbot.model.Bot"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -19,8 +19,8 @@ public class User {
     private String name;
     private String password;
 
-    @OneToMany(mappedBy = "user")
-    private List<Bot> bots;
+    //@OneToMany(mappedBy = "user")
+    //private List<Bot> bots;
 
 
     public User(String name, String password) {
